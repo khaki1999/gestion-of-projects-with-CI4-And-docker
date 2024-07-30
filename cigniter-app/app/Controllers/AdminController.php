@@ -48,6 +48,14 @@ class AdminController extends BaseController
         ];
         return view('backend/pages/project', $data);
     }
+    public function task()
+    {
+
+        $data = [
+            "pageTitle" => "task",
+        ];
+        return view('backend/pages/task', $data);
+    }
 
     public function headername()
     {

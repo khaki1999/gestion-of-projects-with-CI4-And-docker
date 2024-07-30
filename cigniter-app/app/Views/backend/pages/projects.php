@@ -31,9 +31,9 @@
                         Projets
                     </div>
                     <div class="pull-right">
-                        <a href="<?= route_to('projects.create') ?>" class="btn btn-default btn-sm p-0" role="button">
+                        <button type="button" class="btn btn-default btn-sm p-0" data-toggle="modal" data-target="#createProjectModal">
                             <i class="fa fa-plus-circle"> Ajouter</i>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -63,11 +63,16 @@
                                     <td><?= esc($project['name']) ?></td>
                                     <td><?= esc($project['description']) ?></td>
                                     <td>
-                                        <a href="<?= route_to('projects.edit', $project['id']) ?>" class="btn btn-primary btn-sm">Modifier</a>
+                                        <button class="btn btn-primary btn-sm" onclick="showEditProjectModal(<?= $project['id'] ?>, '<?= esc($project['name']) ?>', '<?= esc($project['description']) ?>')">
+                                            Modifier
+                                        </button>
                                         <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= route_to('projects.delete', $project['id']) ?>')">
                                             Supprimer
                                         </button>
-                                        <a href="<?= route_to('projects.tasks', $project['id']) ?>" class="btn btn-secondary btn-sm">Voir les Tâches</a>
+                                        <button class="btn btn-secondary btn-sm" onclick="showTasksModal(<?= $project['id'] ?>, '<?= esc($project['name']) ?>')">
+                                            Voir les Tâches
+                                        </button>
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -82,6 +87,11 @@
         </div>
     </div>
 </div>
+
+<!-- Inclusion des modales -->
+<?= view('backend/modals/create_project_modal') ?>
+<?= view('backend/modals/edit_project_modal') ?>
+<?= view('backend/modals/tasks_modal') ?>
 
 <script>
     function confirmDelete(url) {
@@ -99,6 +109,40 @@
                 // Redirect to the URL for deletion
                 window.location.href = url;
             }
+        });
+    }
+
+    function showEditProjectModal(id, name, description) {
+        $('#editProjectId').val(id);
+        $('#editName').val(name);
+        $('#editDescription').val(description);
+        $('#editProjectModalLabel').text(`Éditer Projet: ${name}`);
+        $('#editProjectForm').attr('action', '<?= route_to('projects.update', 0) ?>'.replace('0', id));
+        $('#editProjectModal').modal('show');
+    }
+
+
+    function showTasksModal(projectId, projectName) {
+        $.get('<?= route_to('projects.tasks', 0) ?>'.replace('0', projectId), function(data) {
+            let tasksHtml = '';
+
+            $('#tasksModalLabel').text(`Tâches du Projet : ${projectName}`);
+
+            if (data.length === 0) {
+                tasksHtml = `<p>Aucune tâche pour le projet : ${projectName}.</p>`;
+            } else {
+                data.forEach(task => {
+                    tasksHtml += `
+                    <div class="task-item">
+                        <h5>${task.name}</h5>
+                        <p>${task.description}</p>
+                    </div>
+                `;
+                });
+            }
+
+            $('#tasksList').html(tasksHtml);
+            $('#tasksModal').modal('show');
         });
     }
 </script>

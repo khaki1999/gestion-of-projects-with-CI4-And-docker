@@ -12,6 +12,14 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="/backend/vendors/images/favicon-16x16.png" />
 	<!-- SweetAlert CDN -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- Bootstrap JavaScript -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 
 	<!-- Mobile Specific Metas -->

@@ -35,4 +35,8 @@ class UsersTask extends Model
         $data = ['user_id' => $userId];
         return $this->where('task_id', $taskId)->set($data)->update();
     }
+    public function getUserIdsByTaskId($taskId)
+    {
+        return $this->where('task_id', $taskId)->findColumn('user_id');
+    }
 }

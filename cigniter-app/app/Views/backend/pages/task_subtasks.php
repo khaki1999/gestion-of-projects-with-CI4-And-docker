@@ -51,9 +51,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($subtasks)): ?>
-                            <?php 
-                            foreach ($subtasks as $subtask): ?>
+                        <?php if (!empty($subtasks)) : ?>
+                            <?php foreach ($subtasks as $subtask) : ?>
                                 <tr>
                                     <td><?= $subtask['name'] ?></td>
                                     <td><?= $subtask['description'] ?></td>
@@ -65,9 +64,9 @@
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
-                        <?php else: ?>
+                        <?php else : ?>
                             <tr>
-                                <td colspan="6">Aucune sous-tâche trouvée.</td>
+                                <td colspan="5">Aucune sous-tâche trouvée.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

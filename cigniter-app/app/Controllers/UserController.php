@@ -44,15 +44,15 @@ class UserController extends BaseController
     }
 
 
-    
+
     public function store()
     {
         $data = $this->request->getPost();
 
         // Vérifier que les données existent
         if (empty($data)) {
-            return redirect()->route('users.create')->with('alert', [
-                'type' => 'error',
+            return $this->response->setJSON([
+                'status' => 'error',
                 'message' => 'Aucune donnée fournie'
             ]);
         }
@@ -61,8 +61,8 @@ class UserController extends BaseController
         $dateOfBirth = $data['datenais'] ?? null;
 
         if (!is_string($dateOfBirth) || empty($dateOfBirth)) {
-            return redirect()->route('users.create')->with('alert', [
-                'type' => 'error',
+            return $this->response->setJSON([
+                'status' => 'error',
                 'message' => 'La date de naissance est obligatoire et doit être valide'
             ]);
         }
@@ -72,14 +72,14 @@ class UserController extends BaseController
             $currentDate = new \DateTime();
 
             if ($dob >= $currentDate) {
-                return redirect()->route('users.create')->with('alert', [
-                    'type' => 'error',
+                return $this->response->setJSON([
+                    'status' => 'error',
                     'message' => 'La date de naissance doit être antérieure à la date actuelle'
                 ]);
             }
         } catch (\Exception $e) {
-            return redirect()->route('users.create')->with('alert', [
-                'type' => 'error',
+            return $this->response->setJSON([
+                'status' => 'error',
                 'message' => 'Format de date invalide'
             ]);
         }
@@ -92,17 +92,18 @@ class UserController extends BaseController
 
         // Vérifier si l'insertion a réussi
         if ($userId === false) {
-            return redirect()->route('users.create')->with('alert', [
-                'type' => 'error',
+            return $this->response->setJSON([
+                'status' => 'error',
                 'message' => 'Échec de la création de l\'utilisateur'
             ]);
         } else {
-            return redirect()->route('users.list')->with('alert', [
-                'type' => 'success',
+            return $this->response->setJSON([
+                'status' => 'success',
                 'message' => 'Utilisateur créé avec succès'
             ]);
         }
     }
+
 
 
 
@@ -115,31 +116,34 @@ class UserController extends BaseController
                 'message' => 'Utilisateur non trouvé'
             ]);
         }
-        return view('backend/pages/edit_user', ['user' => $user]);
+        return $this->response->setJSON([
+            'user' => $user,
+        ]);
     }
     public function update($id)
     {
         $data = $this->request->getPost();
 
         if (empty($data)) {
-            return redirect()->route('users.edit', $id)->with('alert', [
-                'type' => 'error',
+            return $this->response->setJSON([
+                'status' => 'error',
                 'message' => 'Aucune donnée fournie pour la mise à jour'
             ]);
         }
 
         if (!$this->userModel->update($id, $data)) {
-            return redirect()->route('users.edit', $id)->with('alert', [
-                'type' => 'error',
+            return $this->response->setJSON([
+                'status' => 'error',
                 'message' => 'Échec de la mise à jour de l\'utilisateur'
             ]);
         }
 
-        return redirect()->route('users.list')->with('alert', [
-            'type' => 'success',
+        return $this->response->setJSON([
+            'status' => 'success',
             'message' => 'Utilisateur mis à jour avec succès'
         ]);
     }
+
     public function delete($id)
     {
         $this->userModel->delete($id);
@@ -169,6 +173,4 @@ class UserController extends BaseController
         $this->userModel->assignTask($userId, $taskId);
         return $this->response->setJSON(['status' => 'Task assigned to user'])->setStatusCode(200);
     }
-
-    
 }

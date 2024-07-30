@@ -26,32 +26,12 @@ class ProjectController extends BaseController
     }
 
 
-    public function index()
+    public function getAllProjects()
     {
         $projects = $this->model->orderBy('created_at', 'DESC')->findAll();
         return view('backend/pages/projects', ['projects' => $projects]);
     }
 
-
-    public function create()
-    {
-        return view('backend/pages/create_project');
-    }
-
-    // public function store()
-    // {
-    //     $data = $this->request->getPost();
-
-    //     if (empty($data)) {
-    //         return $this->response->setJSON(['error' => 'Aucune donnée fournie'], 400);
-    //     }
-
-    //     if (!$this->model->insert($data)) {
-    //         return $this->response->setJSON(['error' => 'Échec de la création du projet'], 500);
-    //     }
-
-    //     return redirect()->route('projects.list')->with('success', 'Projet créé avec succès');
-    // }
 
     public function store()
     {
@@ -75,14 +55,6 @@ class ProjectController extends BaseController
     }
 
 
-
-    public function getAllProjects()
-    {
-        $projects = $this->model->getAllProjects();
-        return view('backend/pages/projects', ['projects' => $projects]);
-    }
-
-
     public function getProjectBYId($id = null)
     {
         $project = $this->model->getProjectBYId($id);
@@ -92,19 +64,6 @@ class ProjectController extends BaseController
         return $this->response->setJSON($project)->setStatusCode(200);
     }
 
-    // public function update($id)
-    // {
-    //     $data = $this->request->getPost();
-
-    //     if (empty($data)) {
-    //         return redirect()->back()->with('error', 'Aucune donnée fournie pour la mise à jour');
-    //     }
-
-    //     if (!$this->model->updateProject($id, $data)) {
-    //         return redirect()->back()->with('error', 'Échec de la mise à jour du projet');
-    //     }
-    //     return redirect()->route('projects.list')->with('success', 'Projet mis à jour avec succès');
-    // }
 
     public function update($id)
     {
@@ -128,14 +87,6 @@ class ProjectController extends BaseController
     }
 
 
-
-
-    // public function delete($id = null)
-    // {
-    //     $this->model->deleteProject($id);
-    //     return redirect()->route('projects.list')->with('success', 'Projet mis à jour avec succès')->setStatusCode(200);
-    // }
-
     public function delete($id = null)
     {
         if ($this->model->delete($id) === false) {
@@ -156,25 +107,12 @@ class ProjectController extends BaseController
         return $this->response->setJSON($tasks);
     }
 
-    public function edit($id)
-    {
-        $project = $this->model->getProjectBYId($id);
-        if (!$project) {
-            return redirect()->route('projects.list')->with('error', 'Projet non trouvé');
-        }
-        return view('backend/pages/edit-project', ['project' => $project]);
-    }
 
     public function showTasks($projectId)
     {
+        $taskModel = new Task();
+        $tasks = $taskModel->where('project_id', $projectId)->findAll();
 
-        $tasks = $this->taskModel->getTasksByProject($projectId);
-        return view('backend/pages/project_tasks', [
-            'tasks' => $tasks,
-            'project' => $this->model->find($projectId),
-        ]);
+        return $this->response->setJSON($tasks);
     }
-
-    
-    
 }

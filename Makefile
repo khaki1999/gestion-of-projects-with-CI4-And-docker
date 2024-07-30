@@ -1,15 +1,20 @@
 setup:
 	@make build
-	@make up 
+	@make up
 	@make composer-update
+
 build:
 	docker-compose build --no-cache --force-rm
+
 stop:
 	docker-compose stop
+
 up:
 	docker-compose up -d
+
 composer-update:
-	docker exec cigniter-docker bash -c "composer update"
+	docker exec Tootree-project-php-fpm bash -c "composer update"
+
 data:
-	docker exec cigniter-docker bash -c "php artisan migrate"
-	docker exec cigniter-docker bash -c "php artisan db:seed"
+	docker exec Tootree-project-php-fpm bash -c "php artisan migrate"
+	docker exec Tootree-project-php-fpm bash -c "php artisan db:seed"

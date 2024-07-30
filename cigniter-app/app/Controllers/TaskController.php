@@ -78,11 +78,15 @@ class TaskController extends BaseController
 
     public function create()
     {
-        $projectModel = new Project();
-        $userModel = new User();
-        $projects = $projectModel->findAll();
-        $users = $userModel->findAll();
-        return view('backend/pages/create_task', ['projects' => $projects, 'users' => $users]);
+        $usersModel = new User();
+        $projectsModel = new Project();
+
+        $data = [
+            'users' => $usersModel->findAll(),
+            'projects' => $projectsModel->findAll(),
+        ];
+
+        return $this->response->setJSON($data);
     }
 
 
@@ -91,12 +95,16 @@ class TaskController extends BaseController
         $taskModel = new Task();
         $usersTaskModel = new UsersTask();
 
+
+
         $data = [
             'name' => $this->request->getPost('name'),
             'description' => $this->request->getPost('description'),
             'project_id' => $this->request->getPost('project_id'),
             'user_id' => $this->request->getPost('user_id'),
         ];
+
+
 
         $taskId = $taskModel->insert($data);
         $session = session();
@@ -130,82 +138,116 @@ class TaskController extends BaseController
         $task = $this->taskModel->find($id);
         $projectModel = new Project();
         $userModel = new User();
+        $usersTask = new UsersTask();
+        $userIds = $usersTask->getUserIdsByTaskId($id);
         $projects = $projectModel->findAll();
         $users = $userModel->findAll();
         $session = session();
-    
+
         $alert = $session->getFlashdata('alert');
-    
-        return view('backend/pages/edit_task', [
+
+
+        return $this->response->setJSON([
             'task' => $task,
             'projects' => $projects,
             'users' => $users,
+            'userIds' => $userIds,
             'alert' => $alert
         ]);
     }
-    
 
-    
-    // {
+
+
+
+    // public function update($id)
+    // {  
     //     $data = $this->request->getPost();
+    //     $session = session();
 
     //     if (empty($data)) {
-    //         return $this->response->setJSON(['error' => 'Aucune donnée fournie'], 400);
+    //         $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Aucune donnée fournie pour la mise à jour']);
+    //         return redirect()->back();
     //     }
 
     //     $currentTask = $this->model->find($id);
 
-    //     if (!$this->model->updateTask($id, $data)) {
-    //         return $this->response->setJSON(['error' => 'Échec de la mise à jour de la tâche'], 500);
+    //     if ($currentTask) {
+    //         if ($this->model->updateTask($id, $data)) {
+    //             $usersTaskModel = new UsersTask();
+
+    //             $currentUserTask = $usersTaskModel->where('task_id', $id)->first();
+
+    //             // Si l'utilisateur a changé ou n'est pas encore associé
+    //             if ($currentUserTask) {
+    //                 if ($currentUserTask['user_id'] != $data['user_id']) {
+    //                     // Mettre à jour l'utilisateur associé à la tâche
+    //                     $usersTaskModel->where('task_id', $id)->set(['user_id' => $data['user_id']])->update();
+    //                 }
+    //             } else {
+    //                 // Ajouter une nouvelle association si elle n'existe pas
+    //                 $usersTaskModel->insert([
+    //                     'task_id' => $id,
+    //                     'user_id' => $data['user_id']
+    //                 ]);
+    //             }
+
+    //             $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Tâche mise à jour avec succès']);
+    //         } else {
+    //             $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la mise à jour de la tâche']);
+    //         }
+    //     } else {
+    //         $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Tâche non trouvée']);
     //     }
 
-    //     // Vérifier si l'utilisateur a changé
-    //     if ($currentTask['user_id'] != $data['user_id']) {
-    //         // Mettre à jour l'association dans users_task
-    //         $usersTaskModel = new UsersTask();
-    //         $usersTaskData = ['user_id' => $data['user_id']];
-    //         $usersTaskModel->where('task_id', $id)->set($usersTaskData)->update();
-    //     }
-
-    //     return redirect()->route('tasks.list')->with('success', 'Tâche mise à jour avec succès');
-    // }
-
-    // public function delete($id)
-    // {
-    //     // Supprimer les associations dans users_task
-    //     $usersTaskModel = new UsersTask();
-    //     $usersTaskModel->where('task_id', $id)->delete();
-
-    //     // Supprimer la tâche
-    //     $this->model->deleteTasks($id);
-
-    //     return redirect()->route('tasks.list')->with('success', 'Tâche supprimée avec succès');
+    //     return redirect()->route('tasks.list');
     // }
 
     public function update($id)
     {
         $data = $this->request->getPost();
-        $session = session();
+        //$session = session();
 
         if (empty($data)) {
-            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Aucune donnée fournie pour la mise à jour']);
-            return redirect()->back();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aucune donnée fournie pour la mise à jour'
+            ]);
         }
 
         $currentTask = $this->model->find($id);
 
-        if ($this->model->updateTask($id, $data)) {
-            if ($currentTask['user_id'] != $data['user_id']) {
+        if ($currentTask) {
+            if ($this->model->updateTask($id, $data)) {
                 $usersTaskModel = new UsersTask();
-                $usersTaskData = ['user_id' => $data['user_id']];
-                $usersTaskModel->where('task_id', $id)->set($usersTaskData)->update();
-            }
-            $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Tâche mise à jour avec succès']);
-        } else {
-            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la mise à jour de la tâche']);
-        }
+                $currentUserTask = $usersTaskModel->where('task_id', $id)->first();
 
-        return redirect()->route('tasks.list');
+                if ($currentUserTask) {
+                    if ($currentUserTask['user_id'] != $data['user_id']) {
+                        $usersTaskModel->where('task_id', $id)->set(['user_id' => $data['user_id']])->update();
+                    }
+                } else {
+                    $usersTaskModel->insert([
+                        'task_id' => $id,
+                        'user_id' => $data['user_id']
+                    ]);
+                }
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Tâche mise à jour avec succès'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Échec de la mise à jour de la tâche'
+                ]);
+            }
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Tâche non trouvée'
+            ]);
+        }
     }
 
     public function delete($id)
@@ -299,17 +341,18 @@ class TaskController extends BaseController
         $taskModel = new Task();
         $userModel = new User();
 
+
         // Récupérer les informations sur la tâche principale
         $task = $taskModel->find($taskId);
 
         // Récupérer tous les utilisateurs
         $users = $userModel->findAll();
 
-        // Passer les informations à la vue
-        return view('backend/pages/create_subtask', [
+        return $this->response->setJSON([
             'taskId' => $taskId,
             'users' => $users,
-            'project_id' => $task['project_id'] // Passez le project_id de la tâche principale
+            'project_id' => $task['project_id'] 
+
         ]);
     }
 
@@ -324,7 +367,7 @@ class TaskController extends BaseController
             'name' => $this->request->getPost('name'),
             'description' => $this->request->getPost('description'),
             'project_id' => $this->request->getPost('project_id'),
-            'parent_id' => $this->request->getPost('task_id')
+            'parent_id' => $this->request->getPost('parent_id')
         ];
 
         // Assigner l'utilisateur à la sous-tâche
@@ -346,18 +389,24 @@ class TaskController extends BaseController
                 $usersTaskModel->insert($usersTaskData);
             }
 
-            // Rediriger avec un message de succès
-            return redirect()->route('tasks.subtasks', [$data['parent_id']])->with('success', 'Sous-tâche créée avec succès');
+            // Répondre avec un message de succès
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Sous-tâche créée avec succès',
+                'subtaskId' => $subtaskId
+            ]);
         } else {
-            // Rediriger avec un message d'erreur
-            return redirect()->back()->withInput()->with('error', 'Erreur lors de la création de la sous-tâche');
+            // Répondre avec un message d'erreur
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors de la création de la sous-tâche'
+            ]);
         }
     }
 
 
 
-
-    public function showSubtasks($taskId)
+    public function getSubtasks($taskId)
     {
         $subtasks = $this->taskModel->where('parent_id', $taskId)
             ->orderBy('created_at', 'DESC')
@@ -365,30 +414,29 @@ class TaskController extends BaseController
 
         $userModel = new User();
         $projectModel = new Project();
+        $usersTaskModel = new UsersTask();
 
         foreach ($subtasks as &$subtask) {
-            if (isset($subtask['user_id'])) {
-                $user = $userModel->find($subtask['user_id']);
+            // Récupérer les informations de l'utilisateur assigné
+            $userTask = $usersTaskModel->where('task_id', $subtask['id'])->first();
+            if ($userTask) {
+                $user = $userModel->find($userTask['user_id']);
                 $subtask['user_name'] = $user ? $user['username'] : 'Non attribué';
             } else {
                 $subtask['user_name'] = 'Non attribué';
             }
 
-            if (isset($subtask['project_id'])) {
-                $project = $projectModel->find($subtask['project_id']);
-                $subtask['project_name'] = $project ? $project['name'] : 'Aucun projet';
-            } else {
-                $subtask['project_name'] = 'Aucun projet';
-            }
+            // Récupérer les informations du projet associé
+            $project = $projectModel->find($subtask['project_id']);
+            $subtask['project_name'] = $project ? $project['name'] : 'Aucun projet';
         }
+
 
         $task = $this->taskModel->find($taskId);
 
-        return view('backend/pages/task_subtasks', [
+        return $this->response->setJSON([
             'subtasks' => $subtasks,
-            'task' => $task,
+            'task' => $task
         ]);
     }
-
-    
 }

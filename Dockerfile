@@ -1,5 +1,7 @@
 FROM php:8.2-fpm
 
+COPY . /var/www/html
+
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 
@@ -13,8 +15,9 @@ RUN apt-get update -y && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
-    libpng-dev \
-    libzip-dev
+    libzip-dev \
+    libcurl4-openssl-dev \
+    libonig-dev
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
