@@ -8,7 +8,7 @@ use App\Models\User;
 class UserController extends BaseController
 {
     protected $userModel;
-
+    protected $helpers = ['url', 'form', 'CIMail','CIFunctions '];
     public function __construct()
     {
         $this->userModel = new User();
@@ -105,8 +105,6 @@ class UserController extends BaseController
     }
 
 
-
-
     public function edit($id)
     {
         $user = $this->userModel->find($id);
@@ -152,6 +150,26 @@ class UserController extends BaseController
             'message' => 'Utilisateur supprimé avec succès'
         ]);
     }
+
+    public function deleteGroup()
+    {
+       
+        $userIds = $this->request->getPost('users_ids');
+        $session = session();
+
+        if (empty($userIds) || !is_array($userIds)) {
+            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Aucun utilisateur sélectionné pour la suppression']);
+        }
+
+        if (!$this->userModel->deleteGroup($userIds)) {
+            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la suppression des utilisateurs']);
+        }
+
+        $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Utilisateurs supprimés avec succès']);
+        return redirect()->route('users.list');
+        
+    }
+
 
     public function getUserById($id)
     {

@@ -1,4 +1,4 @@
-<?= $this->extend('backend/layout/pages-layout') ?>
+<?= $this->extend('backend/layout/pages_layout') ?>
 <?= $this->section('content') ?>
 
 <div class="page-header">

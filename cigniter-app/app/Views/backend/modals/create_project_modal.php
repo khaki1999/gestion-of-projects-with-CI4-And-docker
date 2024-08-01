@@ -9,7 +9,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="<?= route_to('projects.store') ?>" method="post">
+                <form id="createProjectForm" action="<?= route_to('projects.store') ?>" method="post">
+                    <?= csrf_field() ?>
                     <div class="form-group">
                         <label for="name">Nom du Projet</label>
                         <input type="text" class="form-control" id="name" name="name" placeholder="Entrez le nom du projet" required>
@@ -18,7 +19,12 @@
                         <label for="description">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3" placeholder="Entrez la description du projet"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Ajouter Projet</button>
+                    <button type="submit" class="btn btn-primary" id="createProjectSubmitButton">
+                        Ajouter
+                        <span id="loadingSpinnerButton" class="spinner-border spinner-border-sm ml-2" style="display: none;" role="status">
+                            <span class="sr-only">Chargement...</span>
+                        </span>
+                    </button>
                 </form>
             </div>
         </div>

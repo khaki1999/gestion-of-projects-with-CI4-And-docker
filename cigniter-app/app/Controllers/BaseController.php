@@ -10,6 +10,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use App\Libraries\CIAuth;
 
+
 /**
  * Class BaseController
  *
@@ -37,6 +38,7 @@ abstract class BaseController extends Controller
      * @var list<string>
      */
     protected $helpers = [];
+    protected $data = [];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -61,6 +63,23 @@ abstract class BaseController extends Controller
 
     public function __construct()
     {
+
         $this->user = CIAuth::user();
+        $this->loadUserInfo();
+
+        if (!session()->has('user')) {
+            return redirect()->to('/login');
+        }
+
+        $this->user = session()->get('user');
+    }
+
+    public function loadUserInfo()
+    {
+        $user = session()->get('user');
+        if ($user) {
+            // Passe les informations de l'utilisateur aux vues
+            $this->data['user'] = $user;
+        }
     }
 }

@@ -10,6 +10,9 @@
 	<link rel="apple-touch-icon" sizes="180x180" href="/backend/vendors/images/apple-touch-icon.png" />
 	<link rel="icon" type="image/png" sizes="32x32" href="/backend/vendors/images/favicon-32x32.png" />
 	<link rel="icon" type="image/png" sizes="16x16" href="/backend/vendors/images/favicon-16x16.png" />
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ladda/1.0.6/ladda-themeless.min.css" /> -->
+
 	<!-- SweetAlert CDN -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -17,9 +20,14 @@
 	<!-- Bootstrap JavaScript -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ladda/1.0.6/spin.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ladda/1.0.6/ladda.min.js"></script> -->
 
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script>
 
 
 	<!-- Mobile Specific Metas -->
@@ -31,17 +39,20 @@
 	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/core.css" />
 	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/icon-font.min.css" />
 	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/style.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<link rel="stylesheet" href="/extra-assets/ijabo/ijaboCropTool.min.css">
+
 	<?= $this->renderSection('stylesheets') ?>
 
 </head>
 
 <body>
 
-	<?php include('inc/header.php') ?>
 
-	<?php include('inc/right-sidebar.php') ?>
+	<?php include 'inc/header.php'; ?>
+	<?php include 'inc/right-sidebar.php' ?>
 
-	<?php include('inc/left-sidebar.php') ?>
+	<?php include 'inc/left-sidebar.php'  ?>
 
 
 	<div class="mobile-menu-overlay"></div>
@@ -53,7 +64,7 @@
 				<div>
 					<?= $this->renderSection('content') ?>
 				</div>
-				<?php include('inc/footer.php') ?>
+				<?php include 'inc/footer.php' ?>
 			</div>
 		</div>
 	</div>
@@ -62,6 +73,7 @@
 	<script src="/backend/vendors/scripts/script.min.js"></script>
 	<script src="/backend/vendors/scripts/process.js"></script>
 	<script src="/backend/vendors/scripts/layout-settings.js"></script>
+
 	<?= $this->renderSection('script') ?>
 </body>
 

@@ -20,7 +20,12 @@
                         <label for="editDescription">Description</label>
                         <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Enregistrer les Modifications</button>
+                    <button type="submit" class="btn btn-primary" id="editProjectSubmitButton">
+                        Mettre à Jour
+                        <span id="loadingSpinnerButton" class="spinner-border spinner-border-sm ml-2" style="display:  none;" role="status">
+                            <span class="sr-only">Chargement...</span>
+                        </span>
+                    </button>
                 </form>
             </div>
         </div>

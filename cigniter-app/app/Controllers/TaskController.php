@@ -11,7 +11,8 @@ use App\Models\UsersTask;
 
 
 class TaskController extends BaseController
-{
+{   
+    protected $helpers = ['url', 'form', 'CIMail','CIFunctions '];
     protected $modelName = 'App\Models\Task';
     protected $format    = 'json';
 
@@ -103,7 +104,6 @@ class TaskController extends BaseController
             'project_id' => $this->request->getPost('project_id'),
             'user_id' => $this->request->getPost('user_id'),
         ];
-
 
 
         $taskId = $taskModel->insert($data);
@@ -332,6 +332,28 @@ class TaskController extends BaseController
     }
 
 
+    //suppression groupée
+    public function deleteGroup()
+    {
+        $taskIds = $this->request->getPost('task_ids');
+        $session = session();
+
+        if (!empty($taskIds) && is_array($taskIds)) {
+            // Supprimer les associations utilisateur-tâche
+            $this->userTaskModel->deleteByTaskIds($taskIds);
+
+            // Supprimer les tâches
+            if ($this->taskModel->deleteGroup($taskIds)) {
+                $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Les Tâches selectionnées ont été  supprimée avec succès']);
+            } else {
+                $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la suppression des tâches selectionnée']);
+            }
+        }
+
+        return redirect()->route('tasks.list');
+    }
+
+
     //crud lier a subtask
 
 
@@ -351,7 +373,7 @@ class TaskController extends BaseController
         return $this->response->setJSON([
             'taskId' => $taskId,
             'users' => $users,
-            'project_id' => $task['project_id'] 
+            'project_id' => $task['project_id']
 
         ]);
     }

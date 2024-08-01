@@ -13,8 +13,8 @@ use Carbon\Carbon;
 
 class AuthController extends BaseController
 {
-    protected $helpers = ['url', 'form', 'CIMail'];
-
+    protected $helpers = ['url', 'form', 'CIMail','CIFunctions '];
+    protected $userModel;
     public function loginForm()
     {
         $data = [
@@ -46,17 +46,17 @@ class AuthController extends BaseController
                 'login_id' => [
                     'rules' => 'required|valid_email|is_not_unique[users.email]',
                     'errors' => [
-                        'required' => 'Email is required',
-                        'valid_email' => 'Please enter a valid email address',
-                        'is_not_unique' => 'Email does not exist in our system'
+                        'required' => 'Email est requit',
+                        'valid_email' => 'veillez saisir une adresse email valide ',
+                        'is_not_unique' => 'cette adresse mail n existe pas dans notre systeme'
                     ]
                 ],
                 'password' => [
                     'rules' => 'required|min_length[5]|max_length[45]',
                     'errors' => [
-                        'required' => 'Password is required',
-                        'min_length' => 'Password must have at least 5 characters',
-                        'max_length' => 'Password must not exceed 45 characters'
+                        'required' => 'mot de passe obligatoire',
+                        'min_length' => 'le mot de passe doit contenir 5 caractere minimum',
+                        'max_length' => 'le mot de passe ne doit pas excéder 45 caractere'
                     ]
                 ]
             ]);
@@ -65,16 +65,16 @@ class AuthController extends BaseController
                 'login_id' => [
                     'rules' => 'required|is_not_unique[users.username]',
                     'errors' => [
-                        'required' => 'Username is required',
-                        'is_not_unique' => 'Username does not exist in our system'
+                        'required' => 'nom d utilisateur obligatoire',
+                        'is_not_unique' => 'ce nom d utilisateur n existe pas dans notre systeme'
                     ]
                 ],
                 'password' => [
                     'rules' => 'required|min_length[5]|max_length[45]',
                     'errors' => [
-                        'required' => 'Password is required',
-                        'min_length' => 'Password must have at least 5 characters',
-                        'max_length' => 'Password must not exceed 45 characters'
+                       'required' => 'mot de passe obligatoire',
+                        'min_length' => 'le mot de passe doit contenir 5 caractere minimum',
+                        'max_length' => 'le mot de passe ne doit pas excéder 45 caractere'
                     ]
                 ]
             ]);
@@ -94,6 +94,7 @@ class AuthController extends BaseController
         if (!$user) {
             return redirect()->route('admin.login.form')->with('fail', 'User not found')->withInput();
         }
+
 
 
         if (!$this->passwordIsHashed($user['password'])) {
@@ -132,9 +133,9 @@ class AuthController extends BaseController
             'email' => [
                 'rules' => 'required|valid_email|is_not_unique[users.email]',
                 'errors' => [
-                    'required' => 'Email is required',
-                    'valid_email' => 'please check email field. it does not appears  to be valid ',
-                    'is_not_unique' => 'Email not exists in systeme'
+                    'required' => 'adresse Email obligatoire',
+                    'valid_email' => 'veuillez vérifier le champ email ,il semble pas valide ',
+                    'is_not_unique' => 'cette adresse n existe pas dans notre systeme '
                 ],
             ],
 
@@ -271,26 +272,6 @@ class AuthController extends BaseController
     }
 
 
-    public function profile()
-    {
-        $user = CIAuth::user(); // Récupère les informations de l'utilisateur connecté
+   
 
-        if (!$user) {
-            return redirect()->route('admin.login.form')->with('fail', 'Vous devez être connecté pour accéder à cette page.');
-        }
-
-        $data = [
-            'pageTitle' => 'Profile',
-            'user' => $user
-        ];
-
-        return view('backend/pages/profile', $data);
-    }
-    public function headername()
-    {
-        $data = [
-            'user' => CIAuth::user()
-        ];
-        return view('backend/layout/inc/header', $data);
-    }
 }

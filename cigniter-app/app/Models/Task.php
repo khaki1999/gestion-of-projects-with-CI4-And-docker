@@ -36,6 +36,20 @@ class Task extends Model
         return $this->delete($taskId);
     }
 
+    public function deleteGroup(array $taskIds): bool
+    {
+    
+        $taskIds = array_filter($taskIds, 'is_numeric');
+        $taskIds = array_map('intval', $taskIds);
+
+        if (empty($taskIds)) {
+            return false;
+        }
+
+        // Suppression en masse des tâches
+        return $this->whereIn('id', $taskIds)->delete();
+    }
+
     public function createTask($data)
     {
         return $this->insert($data);
@@ -55,7 +69,7 @@ class Task extends Model
     {
         return $this->update($id, $data);
     }
-    
+
 
     public function getTasksByProject($project_id)
     {
@@ -91,9 +105,4 @@ class Task extends Model
     {
         return $this->where('parent_id', $task_id)->findAll();
     }
-
-    
 }
-
-
-

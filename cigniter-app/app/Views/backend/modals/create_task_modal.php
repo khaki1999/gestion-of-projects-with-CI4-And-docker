@@ -28,10 +28,14 @@
               <option value="">Chargement...</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary">Créer la Tâche</button>
+          <button type="submit" class="btn btn-primary" id="createTaskButton">
+            Créer la Tâche
+            <span id="loadingSpinnerButton" class="spinner-border spinner-border-sm ml-2" style="display: none;" role="status">
+              <span class="sr-only">Chargement...</span>
+            </span>
+          </button>
         </form>
       </div>
     </div>
   </div>
 </div>
-

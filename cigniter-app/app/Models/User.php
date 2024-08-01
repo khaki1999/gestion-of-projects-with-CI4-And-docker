@@ -12,7 +12,7 @@ class User extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['name', 'first_name', 'datenais', 'username', 'password', 'email'];
+    protected $allowedFields    = ['name', 'first_name', 'datenais', 'username', 'password', 'email', 'picture', 'parent_id'];
 
     // Dates
     protected $useTimestamps = true;
@@ -20,7 +20,7 @@ class User extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-   
+
     //     public function getTasks($userId)
     //     {
     //         $taskModel = new Task();
@@ -59,6 +59,14 @@ class User extends Model
     {
         return $this->delete($id);
     }
+    public function deleteGroup(array $ids = []): bool
+    {
+        if (empty($ids) || !is_array($ids)) {
+            return false;
+        }
+        return $this->whereIn($this->primaryKey, $ids)->delete();
+    }
+
     public function getTasks($userId)
     {
         $db = \Config\Database::connect();

@@ -48,6 +48,16 @@ class Project extends Model
         return $this->delete($id);
     }
 
+    public function deleteGroup(array $ids): bool
+    {
+        
+        if (empty($ids) || !is_array($ids)) {
+            return false;
+        }
+
+        return $this->whereIn($this->primaryKey, $ids)->delete();
+    }
+
     public function addTask($projectId, $taskData)
     {
         $taskModel = new Task();

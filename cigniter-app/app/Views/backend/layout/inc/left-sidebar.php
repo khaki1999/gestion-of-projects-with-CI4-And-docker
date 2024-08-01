@@ -1,6 +1,6 @@
 <div class="left-side-bar">
 	<div class="brand-logo">
-		<a href="index.html">
+		<a href="">
 			<img src="/backend/vendors/images/deskapp-logo.svg" alt="" class="dark-logo" />
 			<img src="/backend/vendors/images/deskapp-logo-white.svg" alt="" class="light-logo" />
 		</a>
@@ -31,6 +31,11 @@
 				<li class="dropdown">
 					<a href="<?= route_to('users.list') ?>" class="dropdown-toggle no-arrow">
 						<span class=" micon fa fa-user-o"></span><span class="mtext">Utilisateurs</span>
+					</a>
+				</li>
+				<li class="dropdown">
+					<a href="<?= route_to('admin.profil') ?>" class="dropdown-toggle no-arrow">
+						<span class=" micon fa fa-personal-o"></span><span class="mtext">Profil</span>
 					</a>
 				</li>
 			</ul>

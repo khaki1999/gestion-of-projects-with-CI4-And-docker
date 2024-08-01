@@ -1,4 +1,4 @@
-<?= $this->extend('backend/layout/pages-layout') ?>
+<?= $this->extend('backend/layout/pages_layout') ?>
 <?= $this->section('content') ?>
 
 <div class="page-header">
@@ -46,50 +46,62 @@
                                 <option value="with_tasks" <?= $filter == 'with_tasks' ? 'selected' : '' ?>>Utilisateurs assignés à des tâches</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Appliquer le filtre</button>
+                        <button type="submit" class="btn btn-secondary"> <i class="fa fa-filter"></i></button>
                     </form>
                 </div>
-                <table class="table table-sm table-borderless table-hover table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Prénom</th>
-                            <th scope="col">Nom d'utilisateur</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Tâches Assignées</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($users)) : ?>
-                            <?php foreach ($users as $user) : ?>
-                                <tr>
-                                    <td><?= $user['name'] ?></td>
-                                    <td><?= $user['first_name'] ?></td>
-                                    <td><?= $user['username'] ?></td>
-                                    <td><?= $user['email'] ?></td>
-                                    <td>
-                                        <ul>
-                                            <?php foreach ($user['assignedTasks'] as $task) : ?>
-                                                <li><?= $task['name'] ?></li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editUserModal" onclick="openEditUserModal(<?= $user['id'] ?>)">Modifier</button>
-                                        <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= route_to('users.delete', $user['id']) ?>')">
-                                            Supprimer
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else : ?>
+
+                <form id="deleteGroupForm" method="post" action="<?= route_to('users.delete_group') ?>">
+                    <?= csrf_field() ?>
+                    <table class="table table-sm table-borderless table-hover table-striped">
+                        <thead>
                             <tr>
-                                <td colspan="6">Aucun utilisateur trouvé.</td>
+                                <th scope="col">Selectionner</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Nom d'utilisateur</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Tâches Assignées</th>
+                                <th scope="col">Action</th>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($users)) : ?>
+                                <?php foreach ($users as $user) : ?>
+                                    <tr>
+                                        <td><input type="checkbox" name="users_ids[]" value="<?= $user['id'] ?>" class="users-checkbox"></td>
+                                        <td><?= $user['name'] ?></td>
+                                        <td><?= $user['first_name'] ?></td>
+                                        <td><?= $user['username'] ?></td>
+                                        <td><?= $user['email'] ?></td>
+                                        <td>
+                                            <?php if (!empty($user['assignedTasks'])) : ?>
+                                                <ul>
+                                                    <?php foreach ($user['assignedTasks'] as $task) : ?>
+                                                        <li><?= $task['name'] ?></li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php else : ?>
+                                                <p>Aucune tâche assignée</p>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editUserModal" onclick="openEditUserModal(<?= $user['id'] ?>);return false;"> <i class="fa fa-pencil-alt"></i></button>
+                                            <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= route_to('users.delete', $user['id']) ?>');return false;">
+                                                <i class="fa fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <tr>
+                                    <td colspan="7">Aucun utilisateur trouvé.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <!-- suppression groupée -->
+                    <button id="deleteGroupBtn" type="submit" class="btn btn-danger">Supprimer les Utilisateurs sélectionnées</button>
+                </form>
             </div>
         </div>
     </div>
@@ -101,8 +113,41 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    //ajout d un utilisateur //
+    //add user //
     document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.users-checkbox');
+        const deleteGroupBtn = document.getElementById('deleteGroupBtn');
+        const userTable = document.querySelector('table tbody');
+
+        // Vérifie s'il y a des utilisateurs et ajuste la visibilité du bouton
+        if (userTable.children.length === 1 && userTable.children[0].children.length === 1) {
+            deleteGroupBtn.style.display = 'none';
+        } else {
+            deleteGroupBtn.style.display = 'none'; // Cache initialement en cas de liste vide
+        }
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                deleteGroupBtn.style.display = anyChecked ? 'inline-block' : 'none';
+            });
+        });
+
+        // Gère la visibilité du bouton de suppression si des tâches sont ajoutées dynamiquement
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    const hasUsers = userTable.children.length > 0;
+                    deleteGroupBtn.style.display = hasUsers && Array.from(checkboxes).some(cb => cb.checked) ? 'inline-block' : 'none';
+                }
+            });
+        });
+
+        observer.observe(userTable, {
+            childList: true
+        });
+
+        //add user//
         const addUserForm = document.getElementById('addUserForm');
         const editUserForm = document.getElementById('editUserForm');
 
@@ -179,7 +224,7 @@
         document.getElementById('emai-l').value = email;
 
 
-        $('#editTaskModal').modal('show'); // Show the modal
+        $('#editUserModal').modal('show'); // Show the modal
     }
 
     document.getElementById('update-user-form').addEventListener('submit', function(e) {
@@ -247,6 +292,42 @@
             confirmButtonText: 'OK'
         });
     <?php endif; ?>
+
+    //delete group//
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteGroupBtn = document.getElementById('deleteGroupBtn');
+        const deleteGroupForm = document.getElementById('deleteGroupForm');
+
+        deleteGroupBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Vous ne pourrez pas récupérer ces tâches une fois supprimées !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimer !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Afficher un indicateur de chargement
+                    Swal.fire({
+                        title: 'Suppression en cours...',
+                        text: 'Veuillez patienter.',
+                        allowOutsideClick: false,
+                        onBeforeOpen: () => {
+                            Swal.showLoading()
+                        }
+                    });
+
+                    // Soumettre le formulaire après avoir affiché l'indicateur de chargement
+                    deleteGroupForm.submit();
+                }
+            });
+        });
+    });
+
+    //end delete group/
 </script>
 
 <?= $this->endSection() ?>

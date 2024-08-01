@@ -11,15 +11,23 @@ $routes->get('/', 'Home::index');
 // $routes->get('(:num)/edit', 'TaskController::edit/$1', ['as' => 'tasks.edit']);
 
 // $routes->post('update/(:num)', 'TaskController::update/$1', ['as' => 'tasks.update']);
-$routes->get('tasks/edit/(:num)', 'TaskController::edit/$1');
 $routes->post('tasks/update/(:num)', 'TaskController::update/$1');
 $routes->get('tasks/subtasks/(:num)', 'TaskController::getSubtasks/$1', ['as' => 'tasks.subtasks']);
 //  $routes->post('subtasks/store', 'TaskController::storeSubtask');
 $routes->get('tasks/subtasks/create/(:num)', 'TaskController::createSubtask/$1');
 $routes->post('tasks/storeSubtask', 'TaskController::storeSubtask');
 //users
-$routes->get('users/edit(:num)', 'UserController::edit/$1');
+$routes->get('/users/edit(:num)', 'UserController::edit/$1');
 $routes->post('users/update/(:num)', 'UserController::update/$1');
+
+$routes->get('/search/results', 'SearchController::results', ['as' => 'search.results']);
+$routes->post('tasks/delete_group', 'TaskController::deleteGroup');
+$routes->get('tasks/edit/(:num)', 'TaskController::edit/$1');
+
+
+
+
+
 
 
 
@@ -32,24 +40,28 @@ $routes->group('admin', function ($routes) {
 
 
 
-
     $routes->group('', ['filter' => 'cifilter:auth'], static function ($routes) {
 
         $routes->get('home', 'AdminController::index', ['as' => 'admin.home']);
         $routes->get('logout', 'AdminController::logoutHandler', ['as' => 'admin.logout']);
         $routes->get('project', 'AdminController::project', ['as' => 'project']);
-        $routes->get('task', 'AdminController::task', ['as' => 'task']);
+        $routes->get('projects', 'ProjectController::getAllProjects', ['as' => 'projects.list']);
 
+        $routes->get('task', 'AdminController::task', ['as' => 'task']);
+        $routes->post('update-personal-detail', 'AdminController::updatePersonalDetail');
+
+        
         //projets
         $routes->group('projects', function ($routes) {
             // $routes->get('projects', 'ProjectController::getAllProjects', ['as' => 'projects.list']);
-            $routes->get('projects', 'ProjectController::getAllProjects', ['as' => 'projects.list']);
             // $routes->get('projects/create', 'ProjectController::create', ['as' => 'projects.create']);
             $routes->post('projects/store', 'ProjectController::store', ['as' => 'projects.store']);
             $routes->get('projects/(:num)/delete', 'ProjectController::delete/$1', ['as' => 'projects.delete']);
             // $routes->get('projects/(:num)', 'ProjectController::getProjectById/$1', ['as' => 'projects.view']);
             $routes->post('projects/update/(:num)', 'ProjectController::update/$1', ['as' => 'projects.update']);
             $routes->get('projects/(:num)/tasks', 'ProjectController::showTasks/$1', ['as' => 'projects.tasks']);
+            $routes->post('projects/delete_group', 'ProjectController::deleteGroup', ['as'=> 'project.delete_group']);
+
         });
 
         //task
@@ -60,6 +72,7 @@ $routes->group('admin', function ($routes) {
             // $routes->get('(:num)/edit', 'TaskController::edit/$1', ['as' => 'tasks.edit']);
             // $routes->post('update/(:num)', 'TaskController::update/$1', ['as' => 'tasks.update']);
             // $routes->post('/tasks/update/$1', 'TaskController::update/$1');
+            $routes->post('tasks/delete_group', 'TaskController::deleteGroup', ['as'=> 'tasks.delete_group']);
 
 
             $routes->get('(:num)/delete', 'TaskController::delete/$1', ['as' => 'tasks.delete']);
@@ -93,9 +106,12 @@ $routes->group('admin', function ($routes) {
             $routes->get('(:num)', 'UserController::getUserById/$1', ['as' => 'users.view']);
             $routes->get('(:num)/tasks', 'UserController::getTasks/$1', ['as' => 'users.tasks']);
             $routes->put('(:num)/tasks/(:num)', 'UserController::assignTask/$1/$2', ['as' => 'users.assignTask']);
+            $routes->post('delete_group', 'UserController::deleteGroup', ['as'=> 'users.delete_group']);
+          
         });
         $routes->get('/swal-alert/showAlert/(:any)/(:any)', 'SwalController::showAlert/$1/$2');
-        $routes->get('profil', 'AuthController::profile', ['as' => 'admin.profil']);
+        $routes->get('profil', 'AdminController::profile', ['as' => 'admin.profil']);
+        $routes->get('pages_layout', 'AuthController::username', ['as'=>"admin.username"]);
     });
     $routes->group('', ['filter' => 'cifilter:guest'], static function ($routes) {
         $routes->get('login', 'AuthController::loginForm', ['as' => 'admin.login.form']);

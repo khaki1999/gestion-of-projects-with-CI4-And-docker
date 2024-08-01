@@ -41,6 +41,17 @@ class CreateUsersTable extends Migration
                 'constraint' => '255',
                 'unique'     => true,
             ],
+            'picture' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+                'null'     => true,
+            ],
+            'parent_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => true,
+            ],
             'created_at' => [
                 'type'    => 'DATETIME',
                 'null'    => true,

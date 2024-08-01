@@ -7,7 +7,8 @@ use CodeIgniter\Controller;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
+
+
 
 class ProjectController extends BaseController
 
@@ -15,7 +16,7 @@ class ProjectController extends BaseController
 
     protected $modelName = 'App\Models\Project';
     protected $format    = 'json';
-
+    protected $helpers = ['url', 'form', 'CIMail','CIFunctions '];
     protected $model;
     protected $taskModel;
 
@@ -38,21 +39,25 @@ class ProjectController extends BaseController
         $data = $this->request->getPost();
 
         if (empty($data)) {
-            $session = session();
-            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Aucune donnée fournie']);
-            return redirect()->route('projects.list');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aucune donnée fournie'
+            ]);
         }
 
         if (!$this->model->insert($data)) {
-            $session = session();
-            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la création du projet']);
-            return redirect()->route('projects.list');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Échec de la création du projet'
+            ]);
         }
 
-        $session = session();
-        $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Projet créé avec succès']);
-        return redirect()->route('projects.list');
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Projet créé avec succès'
+        ]);
     }
+
 
 
     public function getProjectBYId($id = null)
@@ -70,20 +75,23 @@ class ProjectController extends BaseController
         $data = $this->request->getPost();
 
         if (empty($data)) {
-            $session = session();
-            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Aucune donnée fournie pour la mise à jour']);
-            return redirect()->back();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aucune donnée fournie pour la mise à jour'
+            ])->setStatusCode(400);
         }
 
         if (!$this->model->updateProject($id, $data)) {
-            $session = session();
-            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la mise à jour du projet']);
-            return redirect()->back();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Échec de la mise à jour du projet'
+            ])->setStatusCode(400);
         }
 
-        $session = session();
-        $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Projet mis à jour avec succès']);
-        return redirect()->route('projects.list');
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Projet mis à jour avec succès'
+        ])->setStatusCode(200);
     }
 
 
@@ -100,6 +108,31 @@ class ProjectController extends BaseController
         return redirect()->route('projects.list');
     }
 
+    //delete group//
+    public function deleteGroup()
+    {
+        $projectIds = $this->request->getPost('project_ids');
+        $session = session();
+    
+        // Vérifiez si $projectIds est un tableau
+        if (empty($projectIds) || !is_array($projectIds)) {
+            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Aucun projet sélectionné pour la suppression']);
+            return redirect()->route('projects.list');
+        }
+    
+        // Appeler le modèle pour supprimer les projets
+        if (!$this->model->deleteGroup($projectIds)) {
+            $session->setFlashdata('alert', ['type' => 'error', 'message' => 'Échec de la suppression des projets']);
+        } else {
+            $session->setFlashdata('alert', ['type' => 'success', 'message' => 'Projets supprimés avec succès']);
+        }
+    
+        return redirect()->route('projects.list');
+    }
+    
+
+    
+
 
     public function getTasks($projectId)
     {
@@ -115,4 +148,7 @@ class ProjectController extends BaseController
 
         return $this->response->setJSON($tasks);
     }
+
+
+   
 }
