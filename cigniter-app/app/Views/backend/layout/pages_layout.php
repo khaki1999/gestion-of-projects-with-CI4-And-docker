@@ -12,7 +12,12 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="/backend/vendors/images/favicon-16x16.png" />
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ladda/1.0.6/ladda-themeless.min.css" /> -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+	<link rel="stylesheet" href="/extra-assets/ijabo/ijaboCropTool.min.css">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+	
 	<!-- SweetAlert CDN -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -24,6 +29,7 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ladda/1.0.6/spin.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ladda/1.0.6/ladda.min.js"></script> -->
+	
 
 
 
@@ -73,8 +79,14 @@
 	<script src="/backend/vendors/scripts/script.min.js"></script>
 	<script src="/backend/vendors/scripts/process.js"></script>
 	<script src="/backend/vendors/scripts/layout-settings.js"></script>
+	<script src="/extra-assets/ijabo/ijaboCropTool.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
 	<?= $this->renderSection('script') ?>
 </body>
 
 </html>
+<!-- Toastr CSS -->
+
+<!-- Toastr JS -->

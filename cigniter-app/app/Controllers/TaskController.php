@@ -8,11 +8,13 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\UsersTask;
+use App\Libraries\CIAuth;
+
 
 
 class TaskController extends BaseController
-{   
-    protected $helpers = ['url', 'form', 'CIMail','CIFunctions '];
+{
+    protected $helpers = ['url', 'form', 'CIMail', 'CIFunctions '];
     protected $modelName = 'App\Models\Task';
     protected $format    = 'json';
 
@@ -36,6 +38,8 @@ class TaskController extends BaseController
         $filter = $this->request->getGet('filter');
         $projectId = $this->request->getGet('project_id');
         $taskType = $this->request->getGet('task_type');
+        $user = CIAuth::user();
+
 
         $query = $this->model->asArray();
 
@@ -72,6 +76,7 @@ class TaskController extends BaseController
             'filter' => $filter,
             'projectId' => $projectId,
             'taskType' => $taskType,
+            'user' => $user
         ]);
     }
 
@@ -160,7 +165,7 @@ class TaskController extends BaseController
 
 
     // public function update($id)
-    // {  
+    // {
     //     $data = $this->request->getPost();
     //     $session = session();
 
@@ -202,6 +207,8 @@ class TaskController extends BaseController
     //     return redirect()->route('tasks.list');
     // }
 
+
+    //upader
     public function update($id)
     {
         $data = $this->request->getPost();
@@ -250,6 +257,7 @@ class TaskController extends BaseController
         }
     }
 
+    //delete
     public function delete($id)
     {
         $usersTaskModel = new UsersTask();

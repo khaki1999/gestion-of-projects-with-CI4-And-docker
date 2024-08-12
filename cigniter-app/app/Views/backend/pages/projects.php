@@ -199,7 +199,7 @@
 
     $(document).ready(function() {
         $('#editProjectForm').on('submit', function(event) {
-            event.preventDefault(); // Empêche le rechargement de la page
+            event.preventDefault();
 
             // Affiche l'indicateur de chargement et désactive le bouton
             $('#loadingSpinnerButton').show();
@@ -212,7 +212,7 @@
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    console.log('Réponse reçue:', response); // Débogage
+                    console.log('Réponse reçue:', response);
 
                     if (response.success) {
                         Swal.fire({
@@ -221,7 +221,7 @@
                             text: response.message
                         }).then(() => {
                             $('#editProjectModal').modal('hide');
-                            location.reload(); // Recharge la page pour voir les modifications
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -232,7 +232,7 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Erreur AJAX:', status, error); // Débogage
+                    console.error('Erreur AJAX:', status, error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Erreur',
@@ -273,12 +273,12 @@
             }
 
             $('#tasksList').html(tasksHtml);
-            $('#tasksList').show(); // Afficher la liste des tâches
-            $(`#tasksLoading-${projectId}`).hide(); // Masquer l'indicateur de chargement
+            $('#tasksList').show();
+            $(`#tasksLoading-${projectId}`).hide();
             $('#tasksModal').modal('show');
         }).fail(function() {
             $('#tasksList').html('<p>Une erreur est survenue lors du chargement des tâches.</p>').show();
-            $(`#tasksLoading-${projectId}`).hide(); // Masquer l'indicateur de chargement en cas d'erreur
+            $(`#tasksLoading-${projectId}`).hide();
         });
     }
 
@@ -295,7 +295,6 @@
             cancelButtonText: 'Annuler'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Redirect to the URL for deletion
                 window.location.href = url;
             }
         });
@@ -308,7 +307,6 @@
 
         deleteGroupBtn.addEventListener('click', function(event) {
             event.preventDefault(); // Empêche la soumission du formulaire
-            event.stopPropagation(); // Empêche la propagation de l'événement
 
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
@@ -327,16 +325,17 @@
                         text: 'Veuillez patienter.',
                         allowOutsideClick: false,
                         onBeforeOpen: () => {
-                            Swal.showLoading()
+                            Swal.showLoading();
                         }
+                    }).then(() => {
+                        // Soumettre le formulaire après avoir affiché l'indicateur de chargement
+                        deleteGroupForm.submit();
                     });
-
-                    // Soumettre le formulaire après avoir affiché l'indicateur de chargement
-                    deleteGroupForm.submit();
                 }
             });
         });
     });
+
 
     //end delete group/
 </script>

@@ -33,7 +33,8 @@
     <div class="col-md-4 mb-4">
         <div class="card card-statistics">
             <div class="card-body">
-                <div class="card-title">
+                <div class="card-title d-flex align-items-center">
+                    <i class="fa fa-users fa-2x mr-2"></i>
                     <h5>Total Utilisateurs</h5>
                 </div>
                 <div class="card-value">
@@ -47,7 +48,8 @@
     <div class="col-md-4 mb-4">
         <div class="card card-statistics">
             <div class="card-body">
-                <div class="card-title">
+                <div class="card-title d-flex align-items-center">
+                    <i class="fa fa-project-diagram fa-2x mr-2"></i>
                     <h5>Total Projets</h5>
                 </div>
                 <div class="card-value">
@@ -61,7 +63,8 @@
     <div class="col-md-4 mb-4">
         <div class="card card-statistics">
             <div class="card-body">
-                <div class="card-title">
+                <div class="card-title d-flex align-items-center">
+                    <i class="fa fa-tasks fa-2x mr-2"></i>
                     <h5>Total Tâches</h5>
                 </div>
                 <div class="card-value">

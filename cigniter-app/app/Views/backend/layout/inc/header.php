@@ -55,9 +55,10 @@
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                     <span class="user-icon">
-                    <img src="" alt="" class="avatar-photo ci-avatar-photo">
+                        <img src="<?= get_user()->picture  == null? '/images/users/default_avatar.png' :'/images/users/'. get_user()->picture ?>" alt="" class="ci-avatar-photo">
+                      
                     </span>
-                    <span class="user-name ci-user-name"></span>
+                    <span class="user-name ci-user-name"><?=get_user()->username?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                     <a class="dropdown-item" href="<?= route_to('admin.profil') ?>"><i class="dw dw-user1"></i> Profile</a>
@@ -85,7 +86,7 @@
         const loadingIndicator = document.getElementById('loadingIndicator');
 
         searchForm.addEventListener('submit', function(event) {
-            event.preventDefault(); 
+            event.preventDefault();
             const query = searchQuery.value;
 
             if (query.trim() === '') {
@@ -95,19 +96,20 @@
 
             // Affiche l'indicateur de chargement
             loadingIndicator.style.display = 'block';
-            searchResultsContent.innerHTML = ''; 
+            searchResultsContent.innerHTML = '';
 
             fetch('<?= route_to('search.results') ?>?query=' + encodeURIComponent(query))
                 .then(response => response.text())
                 .then(html => {
                     searchResultsContent.innerHTML = html;
-                    loadingIndicator.style.display = 'none'; 
-                    $('#searchResultsModal').modal('show'); 
+                    loadingIndicator.style.display = 'none';
+                    $('#searchResultsModal').modal('show');
                 })
                 .catch(error => {
                     console.error('Erreur lors de la recherche:', error);
-                    loadingIndicator.style.display = 'none'; 
+                    loadingIndicator.style.display = 'none';
                 });
         });
     });
 </script>
+

@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Libraries\CIAuth;
-use App\Libraries\hash;
+use App\Libraries\Hash;
 use App\Models\User;
 use App\Models\PasswordResetToken;
 use Carbon\Carbon;
@@ -13,8 +13,9 @@ use Carbon\Carbon;
 
 class AuthController extends BaseController
 {
-    protected $helpers = ['url', 'form', 'CIMail','CIFunctions '];
+    protected $helpers = ['url', 'form', 'CIMail', 'CIFunctions '];
     protected $userModel;
+
     public function loginForm()
     {
         $data = [
@@ -32,6 +33,7 @@ class AuthController extends BaseController
         return view('backend/pages/auth/register', $data);
     }
 
+    //login 
     public function loginHandler()
     {
         $loginId = $this->request->getVar('login_id');
@@ -72,7 +74,7 @@ class AuthController extends BaseController
                 'password' => [
                     'rules' => 'required|min_length[5]|max_length[45]',
                     'errors' => [
-                       'required' => 'mot de passe obligatoire',
+                        'required' => 'mot de passe obligatoire',
                         'min_length' => 'le mot de passe doit contenir 5 caractere minimum',
                         'max_length' => 'le mot de passe ne doit pas excéder 45 caractere'
                     ]
@@ -106,9 +108,9 @@ class AuthController extends BaseController
 
         if (hash::check($password, $user['password'])) {
             CIAuth::setCIAuth($user);
-            return redirect()->route('admin.home');
+            return redirect()->route('admin.home', $user);
         } else {
-            // Password is incorrect
+            // si le mot de passe est incorrect 
             return redirect()->route('admin.login.form')->with('fail', 'Wrong password')->withInput();
         }
     }
@@ -183,7 +185,7 @@ class AuthController extends BaseController
                 'mail_subject' => 'Reset password',
                 'mail_body' => $mail_body,
             );
-            //send email
+
             if (sendEmail($mailConfig)) {
                 return redirect()->route('admin.forgot.form')->with('success', 'we have e-mailed you password reset link');
             } else {
@@ -192,6 +194,7 @@ class AuthController extends BaseController
         }
     }
 
+    //regsiter function
     public function registerHandler()
     {
 
@@ -271,7 +274,20 @@ class AuthController extends BaseController
         }
     }
 
+    public function getUserInfo()
+    {
+        $user = CIAuth::user();
 
-   
+        if (!$user) {
+            return redirect()->route('admin.login.form')->with('fail', 'Vous devez être connecté pour accéder à cette page.');
+        }
 
+        $data = [
+            'pageTitle' => 'infos user',
+            'user' => $user
+        ];
+
+        return view('backend/layout/inc/header', $data);
+        // return $this->response->setJSON($user);
+    }
 }

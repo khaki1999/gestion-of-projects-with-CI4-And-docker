@@ -24,8 +24,9 @@
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-30">
         <div class="pd-20 card-box height-100-p">
             <div class="profile-photo">
-                <a href="modal" class="edit-avatar"><i class="fa fa-pencil"></i></a>
-                <img src="<?= get_user()->picture ? '/images/users/' . get_user()->picture : '/images/users/default_avatar.png' ?>" alt="" class="avatar-photo ci-avatar-photo">
+                <a href="javascript:;" onclick="event.preventDefault();document.getElementById('user_profile_file').click();" class="edit-avatar"><i class="fa fa-pencil"></i></a>
+                <input type="file" name="user_profile_file" id="user_profile_file" class="d-none" style="opacity:0;">
+                <img src="<?= get_user()->picture  == null? '/images/users/default_avatar.png' :'/images/users/'. get_user()->picture ?>" alt="" class="avatar-photo ci-avatar-photo">
             </div>
             <h5 class="text-center h5 mb-0 ci-user-name"><?= get_user()->username ?></h5>
             <p class="text-center text-muted font-14 ci-user-email"><?= get_user()->email ?></p>
@@ -53,7 +54,7 @@
                                 <!-- Ajouter une zone pour les messages d'erreur -->
                                 <div id="error-message" class="alert alert-danger" style="display: none;"></div>
 
-                                <form id="personal_details_form" method="post" action="<?= route_to('update-personal-detail'); ?>">
+                                <form id="personal_details_form" method="POST" action="<?= route_to('update-personal-detail'); ?>">
                                     <?= csrf_field(); ?>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -126,7 +127,7 @@
                 success: function(response) {
                     if ($.isEmptyObject(response.error)) {
                         if (response.status == 1) {
-                            $('.ci-user-name').text(response.user_info.name);
+                            $('.ci-user-name').text(response.user_info.username);
                             $('.ci-user-email').text(response.user_info.email);
                             $('#success-message').text(response.msg).show();
                         } else {
@@ -146,6 +147,24 @@
                 }
             });
         });
+    });
+
+    $('#user_profile_file').ijaboCropTool({
+        preview: '.ci-avatar-photo',
+        setRatio: 1,
+        allowedExtensions: ['jpg', 'jpeg', 'png'],
+        processUrl: '<?= route_to('update-profile-picture')?>',
+        withCSRF: ['<?= csrf_token() ?>', '<?= csrf_hash() ?>'],
+        onSuccess: function(message, element, status) {
+            if(status == 1){
+                toastr.success(message);
+            }else{
+                toastr.error(message);
+            }
+        },
+        onError: function(message, element, status) {
+            alert(message);
+        }
     });
 </script>
 <?= $this->endSection() ?>

@@ -101,7 +101,7 @@ class User extends Model
         return $query->getResultArray();
     }
 
-    // Récupérer les utilisateurs assignés à des tâches
+    // Récupérer les utilisateurs assignés à des do
     public function getUsersWithTasks()
     {
         $db = \Config\Database::connect();

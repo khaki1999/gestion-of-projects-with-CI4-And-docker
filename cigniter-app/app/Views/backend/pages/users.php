@@ -298,7 +298,9 @@
         const deleteGroupBtn = document.getElementById('deleteGroupBtn');
         const deleteGroupForm = document.getElementById('deleteGroupForm');
 
-        deleteGroupBtn.addEventListener('click', function() {
+        deleteGroupBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Empêche la soumission du formulaire
+
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
                 text: "Vous ne pourrez pas récupérer ces tâches une fois supprimées !",
@@ -316,16 +318,17 @@
                         text: 'Veuillez patienter.',
                         allowOutsideClick: false,
                         onBeforeOpen: () => {
-                            Swal.showLoading()
+                            Swal.showLoading();
                         }
+                    }).then(() => {
+                        // Soumettre le formulaire après avoir affiché l'indicateur de chargement
+                        deleteGroupForm.submit();
                     });
-
-                    // Soumettre le formulaire après avoir affiché l'indicateur de chargement
-                    deleteGroupForm.submit();
                 }
             });
         });
     });
+
 
     //end delete group/
 </script>
